@@ -1,4 +1,4 @@
-var game = new Phaser
+var game;
 var gameWidth = 1000;
 var gameHeight = 600;
 
@@ -7,7 +7,7 @@ function run(){
   game.state.add("boot", boot)
 	game.state.add("preload", preload);
 	game.state.add("mainMenu",mainMenu);
-  game.state.add("mainGame", mainGame);
+  // game.state.add("mainGame", mainGame);
 	game.state.start("boot");
 };
 
