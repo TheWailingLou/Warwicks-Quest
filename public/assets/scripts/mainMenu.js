@@ -5,5 +5,6 @@ mainMenu.prototype = {
   preload: function() {
   },
   create: function() {
+    
   }
 }
