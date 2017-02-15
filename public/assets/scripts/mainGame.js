@@ -1,12 +1,15 @@
 var mainGame = function(game) {
 }
 
+var game;
+
+var monster;
 var wizard;
 var cursors;
 var characterVelocity = 200;
 var characterJumpHeight = 500;
 var characterFrameRate = 16;
-var game;
+
 var worldGravity = 1000;
 var facing = 'right';
 
@@ -15,6 +18,8 @@ mainGame.prototype = {
     game = this.game;
 
     wizard = game.add.sprite(50, 50, "wizard")
+    wizard.scale.x = .8;
+    wizard.scale.y = .8;
     wizard.animations.add('walkRight', [70, 71, 72, 73])
     wizard.animations.add('walkLeft', [66, 67, 68, 69])
     wizard.animations.add('elecJumpRight', [38, 39, 40, 41, 42, 43, 44, 45, 46, 47])
@@ -26,11 +31,18 @@ mainGame.prototype = {
     wizard.animations.add('jumpRight', [78, 79, 80, 81])
     wizard.animations.add('jumpLeft', [74, 75, 76, 77])
 
+    monster = game.add.sprite(300, 0, "monster");
+    monster.animations.add('walkLeft', [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]);
+    monster.animations.play('walkLeft', 16, true)
+
     game.physics.enable(wizard, Phaser.Physics.ARCADE);
+    game.physics.enable(monster, Phaser.Physics.ARCADE);
+
     game.physics.arcade.gravity.y = worldGravity;
 
     wizard.body.collideWorldBounds = true;
-    // wizard.body.setSize(20, 32, 5, 16);
+    monster.body.collideWorldBounds = true;
+    wizard.body.setSize(54, 68, 54, 45);
 
 
     cursors = game.input.keyboard.createCursorKeys();
@@ -42,7 +54,12 @@ mainGame.prototype = {
   update: function() {
     // console.log(wizard.body.y)
     // wizard.animations.stop();
-    if (wizard.body.y === 400) {
+    game.physics.arcade.collide(wizard, monster);
+    // console.log(wizard.body.touching.down)
+
+
+
+    if (wizard.body.y === 545.6) {
       if (facing === "electricRight") {
         facing = "iceGroundRight"
         wizard.body.velocity.x = 0;
@@ -107,8 +124,7 @@ mainGame.prototype = {
 
   jump: function() {
 
-
-    if (wizard.body.y === 400) {
+    if (wizard.body.y === 545.6) {
       if (facing === 'left') {
         wizard.animations.play("jumpLeft", characterFrameRate, false)
 
@@ -131,7 +147,7 @@ mainGame.prototype = {
   },
 
   iceGround: function() {
-    if (wizard.body.y === 400) {
+    if (wizard.body.y === 545.6) {
       if (facing === 'left') {
         facing = "iceGroundLeft"
         wizard.body.velocity.x = 0;
@@ -151,5 +167,9 @@ mainGame.prototype = {
       }
     }
 
+  },
+  render: function() {
+    // game.debug.body(wizard)
+    game.debug.body(monster)
   }
 }
