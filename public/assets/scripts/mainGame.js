@@ -4,9 +4,10 @@ var mainGame = function(game) {
 var wizard;
 var cursors;
 var characterVelocity = 200;
+var characterJumpHeight = 500;
 var characterFrameRate = 16;
 var game;
-var worldGravity = 250;
+var worldGravity = 1000;
 var facing = 'right';
 
 mainGame.prototype = {
@@ -20,6 +21,8 @@ mainGame.prototype = {
     wizard.animations.add('elecJumpLeft', [28, 29, 30, 31, 32, 33, 34, 35, 36, 37])
     wizard.animations.add('iceGroundRight', [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 15, 14])
     wizard.animations.add('iceGroundLeft', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 0])
+    wizard.animations.add('groundSmashLeft', [3, 4, 12, 13, 1, 0])
+    wizard.animations.add('groundSmashRight', [17, 18, 26, 27, 15, 14])
     wizard.animations.add('jumpRight', [78, 79, 80, 81])
     wizard.animations.add('jumpLeft', [74, 75, 76, 77])
 
@@ -32,7 +35,7 @@ mainGame.prototype = {
 
     cursors = game.input.keyboard.createCursorKeys();
     spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
-    
+
     spacebar.onDown.add(this.jump)
     cursors.down.onDown.add(this.iceGround);
   },
@@ -40,6 +43,17 @@ mainGame.prototype = {
     // console.log(wizard.body.y)
     // wizard.animations.stop();
     if (wizard.body.y === 400) {
+      if (facing === "electricRight") {
+        facing = "iceGroundRight"
+        wizard.body.velocity.x = 0;
+        wizard.animations.play("groundSmashRight", characterFrameRate, false);
+        
+      } else if (facing === "electricLeft") {
+        facing = "iceGroundLeft"
+        wizard.body.velocity.x = 0;
+        wizard.animations.play("groundSmashLeft", characterFrameRate, false);
+
+      }
       if (cursors.right.isDown) {
         facing = 'right'
         wizard.body.velocity.x = characterVelocity;
@@ -95,16 +109,17 @@ mainGame.prototype = {
       } else if (facing === 'right') {
         wizard.animations.play("jumpRight", characterFrameRate, false)
       }
-      wizard.body.velocity.y = -200;
+      wizard.body.velocity.y = -characterJumpHeight;
     } else {
       if (facing === 'left') {
         facing = "electricLeft"
         wizard.animations.play("elecJumpLeft", characterFrameRate, false)
-
+        wizard.body.velocity.y = -characterJumpHeight;
 
       } else if (facing === 'right') {
         facing = "electricRight"
         wizard.animations.play("elecJumpRight", characterFrameRate, false)
+        wizard.body.velocity.y = -characterJumpHeight;
       }
     }
   },
