@@ -1,20 +1,52 @@
 var mainGame = function(game) {
 }
 
+var game;
+
+var monster;
 var wizard;
 var cursors;
 var characterVelocity = 200;
 var characterJumpHeight = 500;
 var characterFrameRate = 16;
-var game;
+
 var worldGravity = 1000;
 var facing = 'right';
+
+var testMap;
+var layer;
 
 mainGame.prototype = {
   create: function() {
     game = this.game;
 
-    wizard = game.add.sprite(50, 50, "wizard")
+    game.physics.startSystem(Phaser.Physics.ARCADE)
+
+    testMap = game.add.tilemap('testLevel', 32, 32);
+    testMap.addTilesetImage('mainTiles');
+
+
+
+    layer = testMap.createLayer(0)
+    // layer.debug = true;
+
+    testMap.setCollisionByExclusion([164], true, this.layer);
+
+
+    layer.resizeWorld();
+
+    game.physics.arcade.gravity.y = worldGravity;
+
+
+    wizard = game.add.sprite(50, 320, "wizard")
+    game.physics.arcade.enable(wizard);
+
+
+    wizard.body.collideWorldBounds = true;
+
+    wizard.body.setSize(54, 68, 54, 45);
+    wizard.scale.x = .8;
+    wizard.scale.y = .8;
     wizard.animations.add('walkRight', [70, 71, 72, 73])
     wizard.animations.add('walkLeft', [66, 67, 68, 69])
     wizard.animations.add('elecJumpRight', [38, 39, 40, 41, 42, 43, 44, 45, 46, 47])
@@ -26,11 +58,20 @@ mainGame.prototype = {
     wizard.animations.add('jumpRight', [78, 79, 80, 81])
     wizard.animations.add('jumpLeft', [74, 75, 76, 77])
 
-    game.physics.enable(wizard, Phaser.Physics.ARCADE);
-    game.physics.arcade.gravity.y = worldGravity;
+    game.camera.follow(wizard)
 
-    wizard.body.collideWorldBounds = true;
-    // wizard.body.setSize(20, 32, 5, 16);
+
+    monster = game.add.sprite(300, 320, "monster");
+    monster.animations.add('walkLeft', [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]);
+    monster.animations.play('walkLeft', 16, true)
+
+
+    game.physics.arcade.enable(monster);
+
+
+
+
+    monster.body.collideWorldBounds = true;
 
 
     cursors = game.input.keyboard.createCursorKeys();
@@ -38,11 +79,26 @@ mainGame.prototype = {
 
     spacebar.onDown.add(this.jump)
     cursors.down.onDown.add(this.iceGround);
+
+    console.log(wizard.body.checkCollision);
+
   },
+
   update: function() {
+    // console.log(wizard.body.checkCollision.down);
+    game.physics.arcade.collide(wizard, layer);
+    game.physics.arcade.collide(monster, layer);
+    // wizard.body.velocity.set(0)
+
     // console.log(wizard.body.y)
     // wizard.animations.stop();
-    if (wizard.body.y === 400) {
+    game.physics.arcade.collide(wizard, monster);
+
+
+
+
+
+    if (wizard.body.onFloor()) {
       if (facing === "electricRight") {
         facing = "iceGroundRight"
         wizard.body.velocity.x = 0;
@@ -107,8 +163,7 @@ mainGame.prototype = {
 
   jump: function() {
 
-
-    if (wizard.body.y === 400) {
+    if (wizard.body.onFloor()) {
       if (facing === 'left') {
         wizard.animations.play("jumpLeft", characterFrameRate, false)
 
@@ -131,7 +186,7 @@ mainGame.prototype = {
   },
 
   iceGround: function() {
-    if (wizard.body.y === 400) {
+    if (wizard.body.onFloor()) {
       if (facing === 'left') {
         facing = "iceGroundLeft"
         wizard.body.velocity.x = 0;
@@ -151,5 +206,10 @@ mainGame.prototype = {
       }
     }
 
+  },
+  render: function() {
+    // game.debug.body(wizard)
+    // game.debug.layer(layer);
+    // game.debug.body(monster)
   }
 }
