@@ -15,6 +15,7 @@ var facing = 'right';
 
 var testMap;
 var layer;
+var layerBack;
 
 mainGame.prototype = {
   create: function() {
@@ -22,29 +23,42 @@ mainGame.prototype = {
 
     game.physics.startSystem(Phaser.Physics.ARCADE)
 
-    testMap = game.add.tilemap('testLevel', 32, 32);
+
+    backMap = game.add.tilemap('testBack', 32, 32);
+    testMap = game.add.tilemap('testFor', 32, 32);
+
+    backMap.addTilesetImage('mainTiles');
     testMap.addTilesetImage('mainTiles');
-
-
-
-    layer = testMap.createLayer(0)
-    // layer.debug = true;
 
     testMap.setCollisionByExclusion([164], true, this.layer);
 
 
+    layerBack = backMap.createLayer(0)
+    layer = testMap.createLayer(0)
+
+    layerBack.scrollFactorX = 0.5;
+    layerBack.scrollFactorY = 0.5;
+
+
+    // console.log(testMap.layer)
+    // layer.debug = true;
+
+
+
+
     layer.resizeWorld();
+    layerBack.resizeWorld()
 
     game.physics.arcade.gravity.y = worldGravity;
 
 
-    wizard = game.add.sprite(50, 320, "wizard")
+    wizard = game.add.sprite(50, 50, "wizard")
     game.physics.arcade.enable(wizard);
 
 
     wizard.body.collideWorldBounds = true;
 
-    wizard.body.setSize(54, 68, 54, 45);
+    wizard.body.setSize(54, 66, 54, 45);
     wizard.scale.x = .8;
     wizard.scale.y = .8;
     wizard.animations.add('walkRight', [70, 71, 72, 73])
