@@ -4,6 +4,8 @@ var mainGame = function(game) {
 var game;
 
 var monster;
+var skelly;
+var mummy;
 var monsterVelocity = 100;
 var wizard;
 var cursors;
@@ -15,6 +17,8 @@ var worldGravity = 1000;
 var facing = 'right';
 
 var monsterFacing = 'right';
+var skellyFacing = 'right';
+var mummyFacing = 'right';
 
 var testMap;
 var layer;
@@ -59,6 +63,8 @@ mainGame.prototype = {
     game.physics.arcade.enable(wizard);
 
 
+
+
     wizard.body.collideWorldBounds = true;
 
     wizard.body.setSize(54, 66, 54, 45);
@@ -87,15 +93,28 @@ mainGame.prototype = {
     monster = game.add.sprite(300, 320, "monster");
     monster.animations.add('walkLeft', [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]);
     monster.animations.add('walkRight', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+
+    skelly = game.add.sprite(200, 320, "skelly");
+    skelly.animations.add('walkLeft', [12,13,14,15]);
+    skelly.animations.add('walkRight', [24,25,26,27]);
     // monster.animations.play('walkLeft', 16, true)
+
+    mummy = game.add.sprite(150, 320, "mummy");
+    mummy.animations.add('walkLeft', [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35]);
+    mummy.animations.add('walkRight', [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34]);
 
 
     game.physics.arcade.enable(monster);
+    game.physics.arcade.enable(skelly);
+    game.physics.arcade.enable(mummy);
+
 
 
 
 
     monster.body.collideWorldBounds = true;
+    skelly.body.collideWorldBounds = true;
+
 
 
     cursors = game.input.keyboard.createCursorKeys();
@@ -114,8 +133,16 @@ mainGame.prototype = {
 
     game.physics.arcade.collide(wizard, layer);
     game.physics.arcade.collide(monster, layer);
+    game.physics.arcade.collide(skelly, layer);
+    game.physics.arcade.collide(mummy, layer);
+
 
     game.physics.arcade.collide(wizard, monster);
+    game.physics.arcade.collide(wizard, skelly);
+    game.physics.arcade.collide(wizard, mummy);
+
+    // game.physics.arcade.collide(monster, skelly);
+
 
     if (monster.body.onWall()) {
       if (monsterFacing === "right") {
@@ -131,6 +158,38 @@ mainGame.prototype = {
     } else if (monsterFacing === 'left') {
       monster.animations.play("walkLeft", characterFrameRate, true);
       monster.body.velocity.x = -monsterVelocity;
+    }
+
+    if (skelly.body.onWall()) {
+      if (skellyFacing === "right") {
+        skellyFacing = "left";
+      } else {
+        skellyFacing = "right"
+      }
+    }
+
+    if (skellyFacing === 'right') {
+      skelly.animations.play("walkRight", characterFrameRate, true).delay = 190;
+      skelly.body.velocity.x = monsterVelocity;
+    } else if (skellyFacing === 'left') {
+      skelly.animations.play("walkLeft", characterFrameRate, true).delay = 190;
+      skelly.body.velocity.x = -monsterVelocity;
+    }
+
+    if (mummy.body.onWall()) {
+      if (mummyFacing === "right") {
+        mummyFacing = "left";
+      } else {
+        mummyFacing = "right"
+      }
+    }
+
+    if (mummyFacing === 'right') {
+      mummy.animations.play("walkRight", characterFrameRate, true).delay = 45;
+      mummy.body.velocity.x = monsterVelocity;
+    } else if (skellyFacing === 'left') {
+      mummy.animations.play("walkLeft", characterFrameRate, true).delay = 45;
+      mummy.body.velocity.x = -monsterVelocity;
     }
 
 
