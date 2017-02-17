@@ -4,6 +4,7 @@ var mainGame = function(game) {
 var game;
 
 var monster;
+var monsterVelocity = 100;
 var wizard;
 var cursors;
 var characterVelocity = 200;
@@ -12,6 +13,8 @@ var characterFrameRate = 16;
 
 var worldGravity = 1000;
 var facing = 'right';
+
+var monsterFacing = 'right';
 
 var testMap;
 var layer;
@@ -71,6 +74,12 @@ mainGame.prototype = {
     wizard.animations.add('groundSmashRight', [17, 18, 26, 27, 15, 15, 15, 14, 14, 14])
     wizard.animations.add('jumpRight', [78, 79, 80, 81])
     wizard.animations.add('jumpLeft', [74, 75, 76, 77])
+    wizard.animations.add('jumpRight', [78, 79, 80, 81])
+    wizard.animations.add('hitLeft', [86, 87, 89, 87, 86])
+    wizard.animations.add('hitRight', [82, 83, 85, 83, 82])
+
+
+
 
     game.camera.follow(wizard)
 
@@ -91,29 +100,42 @@ mainGame.prototype = {
 
     cursors = game.input.keyboard.createCursorKeys();
     spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
+    shift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 
     spacebar.onDown.add(this.jump)
     cursors.down.onDown.add(this.iceGround);
+    shift.onDown.add(this.hit);
 
     console.log(wizard.body.checkCollision);
 
   },
 
   update: function() {
-    // console.log(wizard.body.checkCollision.down);
+
     game.physics.arcade.collide(wizard, layer);
     game.physics.arcade.collide(monster, layer);
-    // wizard.body.velocity.set(0)
 
-    // console.log(wizard.body.y)
-    // wizard.animations.stop();
     game.physics.arcade.collide(wizard, monster);
 
+    if (monster.body.onWall()) {
+      if (monsterFacing === "right") {
+        monsterFacing = "left";
+      } else {
+        monsterFacing = "right"
+      }
+    }
+
+    if (monsterFacing === 'right') {
+      monster.animations.play("walkRight", characterFrameRate, true);
+      monster.body.velocity.x = monsterVelocity;
+    } else if (monsterFacing === 'left') {
+      monster.animations.play("walkLeft", characterFrameRate, true);
+      monster.body.velocity.x = -monsterVelocity;
+    }
 
 
 
-
-    if (wizard.body.onFloor()) {
+    if (wizard.body.onFloor() && facing !== "hitRight" && facing !== "hitLeft") {
       if (facing === "electricRight") {
         facing = "iceGroundRight"
         wizard.body.velocity.x = 0;
@@ -171,8 +193,8 @@ mainGame.prototype = {
           wizard.body.velocity.x = -characterVelocity;
         }
       }
-
     }
+
 
   },
 
@@ -221,6 +243,16 @@ mainGame.prototype = {
       }
     }
 
+  },
+
+  hit: function() {
+    facing = "hitRight"
+    wizard.animations.play("hitRight", characterFrameRate, false)
+    console.log("doing something?")
+    wizard.animations.currentAnim.onComplete.add(function () {
+      console.log("facing left?")
+      // facing = "right";
+    }, this);
   },
   render: function() {
     // game.debug.body(wizard)
