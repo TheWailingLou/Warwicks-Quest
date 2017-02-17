@@ -112,8 +112,15 @@ mainGame.prototype = {
 
 
 
+
+
     monster.body.collideWorldBounds = true;
     skelly.body.collideWorldBounds = true;
+    mummy.body.collideWorldBounds = true;
+
+    skelly.body.setSize(64,64,0, 0)
+    monster.body.setSize(39,40,0,0)
+    mummy.body.setSize(37,40,0,0)
 
 
 
@@ -316,6 +323,8 @@ mainGame.prototype = {
   render: function() {
     // game.debug.body(wizard)
     // game.debug.layer(layer);
-    // game.debug.body(monster)
+    game.debug.body(skelly)
+    game.debug.body(monster)
+    game.debug.body(mummy)
   }
 }
