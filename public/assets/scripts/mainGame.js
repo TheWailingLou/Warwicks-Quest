@@ -14,6 +14,17 @@ var cursors;
 var characterVelocity = 200;
 var characterJumpHeight = 500;
 var characterFrameRate = 16;
+var grid;
+
+var greenCoin;
+var blueCoin;
+var yellowCoin;
+var coinFrameRate = 10;
+var score = 0;
+var scoreString = '';
+var scoreText;
+var livesString = '';
+var livesText;
 
 var characterAlive = true;
 var monsterAlive = true;
@@ -28,6 +39,8 @@ var facing = 'right';
 var testMap;
 var layer;
 var layerBack;
+var WebFontConfig;
+
 
 mainGame.prototype = {
   create: function() {
@@ -54,9 +67,38 @@ mainGame.prototype = {
 
     // console.log(testMap.layer)
     // layer.debug = true;
+    var bar = game.add.graphics();
+    bar.beginFill(0x000000, .7);
+    bar.drawRect(0, 530, 1000, 70);
+    bar.fixedToCamera = true;
+    // scoreText.cameraOffset.setTo(30, 550)
 
+    WebFontConfig = {
+        active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+        google: {
+          families: ['Revalia']
+        }
+    };
 
+    scoreString = 'Gems : ';
+    scoreText = game.add.text(30, 545, scoreString + score);
+    scoreText.font = 'Revalia';
+    scoreText.fontSize = 30;
+    scoreText.fixedToCamera = true;
+    scoreText.cameraOffset.setTo(30, 545)
 
+    livesString = 'Lives : ';
+    livesText = game.add.text(850, 545, livesString + score);
+    livesText.font = 'Revalia';
+    livesText.fontSize = 30;
+    livesText.fixedToCamera = true;
+    livesText.cameraOffset.setTo(850, 545)
+
+    grd = scoreText.context.createLinearGradient(0, 0, 0, scoreText.canvas.height);
+    grd.addColorStop(0, 'rgb(255, 255, 255)');
+    grd.addColorStop(1, '#50a6ff');
+    scoreText.fill = grd;
+    livesText.fill = grd;
 
     layer.resizeWorld();
     layerBack.resizeWorld()
@@ -108,6 +150,8 @@ mainGame.prototype = {
     monster.facing = "right"
 
     skelly = game.add.sprite(200, 320, "skelly");
+    skelly.scale.x = .8;
+    skelly.scale.y = .8;
     skelly.animations.add('walkLeft', [12,13,14,15]);
     skelly.animations.add('walkRight', [24,25,26,27]);
     skelly.isAlive = true
@@ -115,6 +159,8 @@ mainGame.prototype = {
     // monster.animations.play('walkLeft', 16, true)
 
     mummy = game.add.sprite(150, 320, "mummy");
+    mummy.scale.x = .9;
+    mummy.scale.y = .9;
     mummy.animations.add('walkLeft', [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35]);
     mummy.animations.add('walkRight', [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34]);
     mummy.isAlive = true;
@@ -130,13 +176,37 @@ mainGame.prototype = {
 
     enemies = [skelly, monster, mummy, bat]
 
+    greenCoin = game.add.sprite(350, 320, "greenCoin");
+    yellowCoin = game.add.sprite(320, 320, "yellowCoin");
+    blueCoin = game.add.sprite(380, 320, "blueCoin");
+    greenCoin.val = 5;
+    blueCoin.val = 10;
+    yellowCoin.val = 15;
+    greenCoin.scale.x = .7;
+    greenCoin.scale.y = .7;
+    yellowCoin.scale.x = .7;
+    yellowCoin.scale.y = .7;
+    blueCoin.scale.x = .7;
+    blueCoin.scale.y = .7;
+    //
+    greenCoin.animations.add('sparkle', [1,2,3,4,5,6,7,8]);
+    blueCoin.animations.add('sparkle', [1,2,3,4,5,6,7,8]);
+    yellowCoin.animations.add('sparkle', [1,2,3,4,5,6,7,8]);
+
 
     game.physics.arcade.enable(monster);
     game.physics.arcade.enable(skelly);
     game.physics.arcade.enable(mummy);
     game.physics.arcade.enable(bat);
-
+    
     bat.body.allowGravity = false;
+
+    game.physics.arcade.enable(greenCoin);
+    game.physics.arcade.enable(blueCoin);
+    game.physics.arcade.enable(yellowCoin);
+
+
+    
 
 
 
@@ -149,10 +219,16 @@ mainGame.prototype = {
     bat.body.collideWorldBounds = true;
 
 
-    skelly.body.setSize(64,64,0, 0)
-    monster.body.setSize(39,40,0,0)
-    mummy.body.setSize(37,40,0,0)
+
+    skelly.body.setSize(40,50,15,9)
+    monster.body.setSize(37,40,2,0)
+    mummy.body.setSize(30,45,7,0)
     bat.body.setSize(32,32, 0, 0)
+    
+    blueCoin.body.setSize(20,30,7,0)
+    yellowCoin.body.setSize(20,30,7,0)
+    greenCoin.body.setSize(20,30,7,0)
+
 
 
 
@@ -170,19 +246,32 @@ mainGame.prototype = {
 
   update: function() {
 
+
     game.physics.arcade.collide(wizard, layer, null, function(){return wizard.isAlive});
     game.physics.arcade.collide(monster, layer, null, function(){return monster.isAlive});
     game.physics.arcade.collide(skelly, layer, null, function(){return skelly.isAlive});
     game.physics.arcade.collide(mummy, layer, null, function(){return mummy.isAlive});
-
 
     game.physics.arcade.collide(wizard, monster, monsterCollide, function(){return (wizard.isAlive && monster.isAlive)}, this);
     game.physics.arcade.collide(wizard, skelly, monsterCollide, function(){return (wizard.isAlive && skelly.isAlive)}, this);
     game.physics.arcade.collide(wizard, mummy, monsterCollide, function(){return (wizard.isAlive && mummy.isAlive)}, this);
     game.physics.arcade.collide(wizard, bat, monsterCollide, function(){return (wizard.isAlive && bat.isAlive)}, this);
     // game.physics.arcade.collide(wizard, mummy, null, monsterCollide, this);
+    
+    game.physics.arcade.collide(greenCoin, layer);
+    game.physics.arcade.collide(blueCoin, layer);
+    game.physics.arcade.collide(yellowCoin, layer);
 
-    // game.physics.arcade.collide(monster, skelly);
+    greenCoin.animations.play("sparkle", coinFrameRate, true);
+    blueCoin.animations.play("sparkle", coinFrameRate-1, true);
+    yellowCoin.animations.play("sparkle", coinFrameRate+1, true);
+
+
+    game.physics.arcade.collide(wizard, greenCoin, this.takeCoin);
+    game.physics.arcade.collide(wizard, blueCoin, this.takeCoin);
+    game.physics.arcade.collide(wizard, yellowCoin, this.takeCoin);
+
+
 
 
     if (monster.body.onWall()) {
@@ -201,6 +290,8 @@ mainGame.prototype = {
       monster.body.velocity.x = -monsterVelocity;
     }
 
+    greenCoin.animations.play("sparkle", characterFrameRate, true);
+
     if (skelly.body.onWall()) {
       if (skelly.facing === "right") {
         skelly.facing = "left";
@@ -209,11 +300,18 @@ mainGame.prototype = {
       }
     }
 
+
+    
+      
+      
+   
+      
     if (skelly.facing === 'right') {
       skelly.animations.play("walkRight", 8, true);
       skelly.body.velocity.x = monsterVelocity;
     } else if (skelly.facing === 'left') {
       skelly.animations.play("walkLeft", 8, true);
+
       skelly.body.velocity.x = -monsterVelocity;
     }
 
@@ -489,6 +587,12 @@ mainGame.prototype = {
 
   },
 
+  takeCoin: function(player, coin) {
+      coin.kill();
+      score += coin.val;
+      scoreText.text = scoreString + score;
+  },
+
   jump: function() {
     console.log(wizard.body.velocity.y)
     if (wizard.body.onFloor()) {
@@ -623,6 +727,11 @@ mainGame.prototype = {
     // game.debug.body(monster)
     // game.debug.body(mummy)
     // game.debug.body(bat)
+
+    // game.debug.body(yellowCoin)
+    // game.debug.body(blueCoin)
+    // game.debug.body(greenCoin)
+
   }
 }
 
