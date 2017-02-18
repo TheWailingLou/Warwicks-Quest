@@ -4,6 +4,9 @@ var mainGame = function(game) {
 var game;
 
 var monster;
+var skelly;
+var mummy;
+var monsterVelocity = 100;
 var wizard;
 var cursors;
 var characterVelocity = 200;
@@ -13,8 +16,13 @@ var characterFrameRate = 16;
 var worldGravity = 1000;
 var facing = 'right';
 
+var monsterFacing = 'right';
+var skellyFacing = 'right';
+var mummyFacing = 'right';
+
 var testMap;
 var layer;
+var layerBack;
 
 mainGame.prototype = {
   create: function() {
@@ -22,29 +30,44 @@ mainGame.prototype = {
 
     game.physics.startSystem(Phaser.Physics.ARCADE)
 
-    testMap = game.add.tilemap('testLevel', 32, 32);
+
+    backMap = game.add.tilemap('testBack', 32, 32);
+    testMap = game.add.tilemap('testFor', 32, 32);
+
+    backMap.addTilesetImage('mainTiles');
     testMap.addTilesetImage('mainTiles');
-
-
-
-    layer = testMap.createLayer(0)
-    // layer.debug = true;
 
     testMap.setCollisionByExclusion([164], true, this.layer);
 
 
+    layerBack = backMap.createLayer(0)
+    layer = testMap.createLayer(0)
+
+    layerBack.scrollFactorX = 0.5;
+    layerBack.scrollFactorY = 0.5;
+
+
+    // console.log(testMap.layer)
+    // layer.debug = true;
+
+
+
+
     layer.resizeWorld();
+    layerBack.resizeWorld()
 
     game.physics.arcade.gravity.y = worldGravity;
 
 
-    wizard = game.add.sprite(50, 320, "wizard")
+    wizard = game.add.sprite(50, 50, "wizard")
     game.physics.arcade.enable(wizard);
+
+
 
 
     wizard.body.collideWorldBounds = true;
 
-    wizard.body.setSize(54, 68, 54, 45);
+    wizard.body.setSize(54, 66, 54, 45);
     wizard.scale.x = .8;
     wizard.scale.y = .8;
     wizard.animations.add('walkRight', [70, 71, 72, 73])
@@ -57,48 +80,128 @@ mainGame.prototype = {
     wizard.animations.add('groundSmashRight', [17, 18, 26, 27, 15, 15, 15, 14, 14, 14])
     wizard.animations.add('jumpRight', [78, 79, 80, 81])
     wizard.animations.add('jumpLeft', [74, 75, 76, 77])
+    wizard.animations.add('jumpRight', [78, 79, 80, 81])
+    wizard.animations.add('hitLeft', [86, 87, 89, 87, 86])
+    wizard.animations.add('hitRight', [82, 83, 85, 83, 82])
+
+
+
 
     game.camera.follow(wizard)
 
 
     monster = game.add.sprite(300, 320, "monster");
     monster.animations.add('walkLeft', [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]);
-    monster.animations.play('walkLeft', 16, true)
+    monster.animations.add('walkRight', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+
+    skelly = game.add.sprite(200, 320, "skelly");
+    skelly.animations.add('walkLeft', [12,13,14,15]);
+    skelly.animations.add('walkRight', [24,25,26,27]);
+    // monster.animations.play('walkLeft', 16, true)
+
+    mummy = game.add.sprite(150, 320, "mummy");
+    mummy.animations.add('walkLeft', [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35]);
+    mummy.animations.add('walkRight', [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34]);
 
 
     game.physics.arcade.enable(monster);
+    game.physics.arcade.enable(skelly);
+    game.physics.arcade.enable(mummy);
+
+
+
 
 
 
 
     monster.body.collideWorldBounds = true;
+    skelly.body.collideWorldBounds = true;
+    mummy.body.collideWorldBounds = true;
+
+    skelly.body.setSize(64,64,0, 0)
+    monster.body.setSize(39,40,0,0)
+    mummy.body.setSize(37,40,0,0)
+
 
 
     cursors = game.input.keyboard.createCursorKeys();
     spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
+    shift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 
     spacebar.onDown.add(this.jump)
     cursors.down.onDown.add(this.iceGround);
+    shift.onDown.add(this.hit);
 
     console.log(wizard.body.checkCollision);
 
   },
 
   update: function() {
-    // console.log(wizard.body.checkCollision.down);
+
     game.physics.arcade.collide(wizard, layer);
     game.physics.arcade.collide(monster, layer);
-    // wizard.body.velocity.set(0)
+    game.physics.arcade.collide(skelly, layer);
+    game.physics.arcade.collide(mummy, layer);
 
-    // console.log(wizard.body.y)
-    // wizard.animations.stop();
+
     game.physics.arcade.collide(wizard, monster);
+    game.physics.arcade.collide(wizard, skelly);
+    game.physics.arcade.collide(wizard, mummy);
+
+    // game.physics.arcade.collide(monster, skelly);
+
+
+    if (monster.body.onWall()) {
+      if (monsterFacing === "right") {
+        monsterFacing = "left";
+      } else {
+        monsterFacing = "right"
+      }
+    }
+
+    if (monsterFacing === 'right') {
+      monster.animations.play("walkRight", characterFrameRate, true);
+      monster.body.velocity.x = monsterVelocity;
+    } else if (monsterFacing === 'left') {
+      monster.animations.play("walkLeft", characterFrameRate, true);
+      monster.body.velocity.x = -monsterVelocity;
+    }
+
+    if (skelly.body.onWall()) {
+      if (skellyFacing === "right") {
+        skellyFacing = "left";
+      } else {
+        skellyFacing = "right"
+      }
+    }
+
+    if (skellyFacing === 'right') {
+      skelly.animations.play("walkRight", characterFrameRate, true).delay = 190;
+      skelly.body.velocity.x = monsterVelocity;
+    } else if (skellyFacing === 'left') {
+      skelly.animations.play("walkLeft", characterFrameRate, true).delay = 190;
+      skelly.body.velocity.x = -monsterVelocity;
+    }
+
+    if (mummy.body.onWall()) {
+      if (mummyFacing === "right") {
+        mummyFacing = "left";
+      } else {
+        mummyFacing = "right"
+      }
+    }
+
+    if (mummyFacing === 'right') {
+      mummy.animations.play("walkRight", characterFrameRate, true).delay = 45;
+      mummy.body.velocity.x = monsterVelocity;
+    } else if (skellyFacing === 'left') {
+      mummy.animations.play("walkLeft", characterFrameRate, true).delay = 45;
+      mummy.body.velocity.x = -monsterVelocity;
+    }
 
 
 
-
-
-    if (wizard.body.onFloor()) {
+    if (wizard.body.onFloor() && facing !== "hitRight" && facing !== "hitLeft") {
       if (facing === "electricRight") {
         facing = "iceGroundRight"
         wizard.body.velocity.x = 0;
@@ -156,8 +259,8 @@ mainGame.prototype = {
           wizard.body.velocity.x = -characterVelocity;
         }
       }
-
     }
+
 
   },
 
@@ -207,9 +310,21 @@ mainGame.prototype = {
     }
 
   },
+
+  hit: function() {
+    facing = "hitRight"
+    wizard.animations.play("hitRight", characterFrameRate, false)
+    console.log("doing something?")
+    wizard.animations.currentAnim.onComplete.add(function () {
+      console.log("facing left?")
+      // facing = "right";
+    }, this);
+  },
   render: function() {
     // game.debug.body(wizard)
     // game.debug.layer(layer);
-    // game.debug.body(monster)
+    game.debug.body(skelly)
+    game.debug.body(monster)
+    game.debug.body(mummy)
   }
 }
