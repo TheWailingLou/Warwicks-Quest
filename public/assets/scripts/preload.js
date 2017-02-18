@@ -12,6 +12,8 @@ preload.prototype = {
     this.game.load.atlasJSONHash('spikes', 'assets/sprites/spikes.png', 'assets/sprites/spikes.json');
     this.game.load.atlasJSONHash('acidBath', 'assets/sprites/AcidBath.png', 'assets/sprites/AcidBath.json');
 
+    this.game.load.atlasJSONHash('camp', 'assets/sprites/firecamp.png', 'assets/sprites/firecamp.json');
+
 
     this.game.load.atlasJSONHash('greenCoin', 'assets/sprites/Crystals/green/green.png', 'assets/sprites/Crystals/green/green.json');
     this.game.load.atlasJSONHash('blueCoin', 'assets/sprites/Crystals/blue/blue.png', 'assets/sprites/Crystals/blue/blue.json');
