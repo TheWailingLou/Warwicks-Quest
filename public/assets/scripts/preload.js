@@ -25,6 +25,6 @@ preload.prototype = {
 
   },
   create: function() {
-    this.game.state.start("mainMenu")
+    this.game.state.start("mainGame")
   }
 }
