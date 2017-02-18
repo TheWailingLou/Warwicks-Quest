@@ -21,6 +21,7 @@ var blueCoin;
 var yellowCoin;
 var coinFrameRate = 10;
 var score = 0;
+var health = 10;
 var scoreString = '';
 var scoreText;
 var livesString = '';
@@ -87,6 +88,13 @@ mainGame.prototype = {
     scoreText.fixedToCamera = true;
     scoreText.cameraOffset.setTo(30, 545)
 
+    healthString = "Health : "
+    healthText = game.add.text(300, 545, healthString + health);
+    healthText.font = 'Revalia';
+    healthText.fontSize = 30;
+    healthText.fixedToCamera = true;
+    healthText.cameraOffset.setTo(300, 545)
+
     livesString = 'Lives : ';
     livesText = game.add.text(850, 545, livesString + score);
     livesText.font = 'Revalia';
@@ -99,17 +107,24 @@ mainGame.prototype = {
     grd.addColorStop(1, '#50a6ff');
     scoreText.fill = grd;
     livesText.fill = grd;
+    healthText.fill = grd;
 
     layer.resizeWorld();
     layerBack.resizeWorld()
 
     game.physics.arcade.gravity.y = worldGravity;
 
+    spikes = game.add.sprite(640, 768, "spikes")
+    game.physics.arcade.enable(spikes);
+    spikes.body.allowGravity = false;
+    spikes.body.immovable = true;
+    spikes.body.setSize(32, 16, 0, 16)
+    spikes.frame = 0;
+
+
 
     wizard = game.add.sprite(50, 50, "wizard")
     game.physics.arcade.enable(wizard);
-
-
 
 
     wizard.body.collideWorldBounds = true;
@@ -118,6 +133,9 @@ mainGame.prototype = {
     wizard.isAlive = true;
     wizard.facing = "right"
     wizard.lightningJump = false;
+    wizard.health = 10;
+    wizard.injured = false;
+
     wizard.scale.x = .8;
     wizard.scale.y = .8;
     wizard.animations.add('walkRight', [70, 71, 72, 73])
@@ -146,6 +164,7 @@ mainGame.prototype = {
     monster = game.add.sprite(300, 320, "monster");
     monster.animations.add('walkLeft', [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]);
     monster.animations.add('walkRight', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+    monster.damage = 5
     monster.isAlive = true;
     monster.facing = "right"
 
@@ -154,6 +173,7 @@ mainGame.prototype = {
     skelly.scale.y = .8;
     skelly.animations.add('walkLeft', [12,13,14,15]);
     skelly.animations.add('walkRight', [24,25,26,27]);
+    skelly.damage = 3;
     skelly.isAlive = true
     skelly.facing = "right"
     // monster.animations.play('walkLeft', 16, true)
@@ -163,6 +183,7 @@ mainGame.prototype = {
     mummy.scale.y = .9;
     mummy.animations.add('walkLeft', [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35]);
     mummy.animations.add('walkRight', [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34]);
+    mummy.damage = 2;
     mummy.isAlive = true;
     mummy.facing = "right"
 
@@ -170,15 +191,25 @@ mainGame.prototype = {
     bat.animations.add("flyLeft", [12, 13, 14, 15]);
     bat.animations.add('flyRight', [4, 5, 6, 7]);
     // bat.animations.play('flyLeft', 16, true)
+    bat.damage = 1;
     bat.isAlive = true;
     bat.facing = "right"
 
+    bat2 = game.add.sprite(300, 600, "bat");
+    bat2.animations.add("flyLeft", [12, 13, 14, 15]);
+    bat2.animations.add('flyRight', [4, 5, 6, 7]);
+    // bat.animations.play('flyLeft', 16, true)
+    bat2.damage = 1;
+    bat2.isAlive = true;
+    bat2.facing = "right"
 
-    enemies = [skelly, monster, mummy, bat]
+
+    enemies = [skelly, monster, mummy, bat, bat2]
 
     greenCoin = game.add.sprite(350, 320, "greenCoin");
     yellowCoin = game.add.sprite(320, 320, "yellowCoin");
     blueCoin = game.add.sprite(380, 320, "blueCoin");
+
     greenCoin.val = 5;
     blueCoin.val = 10;
     yellowCoin.val = 15;
@@ -198,15 +229,17 @@ mainGame.prototype = {
     game.physics.arcade.enable(skelly);
     game.physics.arcade.enable(mummy);
     game.physics.arcade.enable(bat);
-    
+    game.physics.arcade.enable(bat2);
+
     bat.body.allowGravity = false;
+    bat2.body.allowGravity = false;
 
     game.physics.arcade.enable(greenCoin);
     game.physics.arcade.enable(blueCoin);
     game.physics.arcade.enable(yellowCoin);
 
 
-    
+
 
 
 
@@ -217,6 +250,7 @@ mainGame.prototype = {
     skelly.body.collideWorldBounds = true;
     mummy.body.collideWorldBounds = true;
     bat.body.collideWorldBounds = true;
+    bat2.body.collideWorldBounds = true;
 
 
 
@@ -224,7 +258,8 @@ mainGame.prototype = {
     monster.body.setSize(37,40,2,0)
     mummy.body.setSize(30,45,7,0)
     bat.body.setSize(32,32, 0, 0)
-    
+    bat2.body.setSize(32,32, 0, 0)
+
     blueCoin.body.setSize(20,30,7,0)
     yellowCoin.body.setSize(20,30,7,0)
     greenCoin.body.setSize(20,30,7,0)
@@ -245,7 +280,11 @@ mainGame.prototype = {
   },
 
   update: function() {
+    if (wizard.health < 0) {
+      wizard.health = 0;
+    }
 
+    healthText.text = healthString + wizard.health;
 
     game.physics.arcade.collide(wizard, layer, null, function(){return wizard.isAlive});
     game.physics.arcade.collide(monster, layer, null, function(){return monster.isAlive});
@@ -256,8 +295,11 @@ mainGame.prototype = {
     game.physics.arcade.collide(wizard, skelly, monsterCollide, function(){return (wizard.isAlive && skelly.isAlive)}, this);
     game.physics.arcade.collide(wizard, mummy, monsterCollide, function(){return (wizard.isAlive && mummy.isAlive)}, this);
     game.physics.arcade.collide(wizard, bat, monsterCollide, function(){return (wizard.isAlive && bat.isAlive)}, this);
+    game.physics.arcade.collide(wizard, bat2, monsterCollide, function(){return (wizard.isAlive && bat2.isAlive)}, this);
     // game.physics.arcade.collide(wizard, mummy, null, monsterCollide, this);
-    
+
+    game.physics.arcade.collide(wizard, spikes, deathTrapCollide, function(){return (wizard.isAlive)}, this);
+
     game.physics.arcade.collide(greenCoin, layer);
     game.physics.arcade.collide(blueCoin, layer);
     game.physics.arcade.collide(yellowCoin, layer);
@@ -300,12 +342,6 @@ mainGame.prototype = {
       }
     }
 
-
-    
-      
-      
-   
-      
     if (skelly.facing === 'right') {
       skelly.animations.play("walkRight", 8, true);
       skelly.body.velocity.x = monsterVelocity;
@@ -350,6 +386,38 @@ mainGame.prototype = {
       }
     } else {
       bat.frame = 1
+    }
+
+    var followDistance = 300 //px
+    if (bat2.facing !== "dead") {
+      var xDis = Math.abs(bat2.body.x - wizard.body.x)
+      var yDis = Math.abs(bat2.body.y - wizard.body.y)
+      // console.log(xDis, yDis)
+      if (xDis < followDistance  && yDis < followDistance) {
+        // console.log(xDis, yDis)
+        if (bat2.body.x > wizard.body.x) {
+          bat2.animations.play("flyLeft", 12, true);//.delay = 45;
+          bat2.body.velocity.x = -monsterVelocity;
+        } else if (bat.body.x < wizard.body.x){
+          bat2.animations.play("flyRight", 12, true);//.delay = 45;
+          bat2.body.velocity.x = monsterVelocity;
+        } else {
+          bat2.body.velocity.x = 0;
+        }
+
+        if (bat2.body.y > wizard.body.y + 1) {
+          bat2.body.velocity.y = -monsterVelocity;
+        } else if (bat2.body.y < wizard.body.y - 1) {
+          bat2.body.velocity.y = monsterVelocity;
+        } else {
+          bat2.body.velocity.y = 0;
+        }
+      } else {
+        bat2.body.velocity.y = 0;
+        bat2.body.velocity.x = 0;
+      }
+    } else {
+      bat2.frame = 1
     }
 
 
@@ -668,11 +736,11 @@ mainGame.prototype = {
     if (wizard.facing === "right") {
       wizard.facing = "hitRight"
       // debug for hits //
-      console.log(wizard.body.x)
-      var dot = game.add.graphics(0, 0)
-      dot.beginFill(0xFF0000, 1)
-      dot.drawRect(wizard.body.x+64, wizard.body.y+33, 5, 5)
-      dot.endFill()
+      // console.log(wizard.body.x)
+      // var dot = game.add.graphics(0, 0)
+      // dot.beginFill(0xFF0000, 1)
+      // dot.drawRect(wizard.body.x+64, wizard.body.y+33, 5, 5)
+      // dot.endFill()
       ///
 
       enemies.forEach(function(enemy) {
@@ -698,22 +766,25 @@ mainGame.prototype = {
       wizard.animations.play("hitRight", characterFrameRate, false)
 
       wizard.animations.currentAnim.onComplete.add(function () {
-        dot.destroy()
-        // wizard.body.setSize(54, 66, 54, 45);
         wizard.facing = "right";
       }, this);
     } else if (wizard.facing === "left") {
       wizard.facing = "hitLeft"
-      var dot = game.add.graphics(0, 0)
-      dot.beginFill(0xFF0000, 1)
-      dot.drawRect(wizard.body.x-26, wizard.body.y+33, 5, 5)
-      dot.endFill()
+
+      //// hit debug ///
+
+      // var dot = game.add.graphics(0, 0)
+      // dot.beginFill(0xFF0000, 1)
+      // dot.drawRect(wizard.body.x-26, wizard.body.y+33, 5, 5)
+      // dot.endFill()
+
+      /////
 
       console.log(mummy.body.hitTest(wizard.body.x-26, wizard.body.y+33))
       wizard.animations.play("hitLeft", characterFrameRate, false)
 
       wizard.animations.currentAnim.onComplete.add(function () {
-        dot.destroy()
+
         wizard.facing = "left";
       }, this);
     }
@@ -727,6 +798,7 @@ mainGame.prototype = {
     // game.debug.body(monster)
     // game.debug.body(mummy)
     // game.debug.body(bat)
+    game.debug.body(spikes)
 
     // game.debug.body(yellowCoin)
     // game.debug.body(blueCoin)
@@ -736,15 +808,37 @@ mainGame.prototype = {
 }
 
 function monsterCollide(_wizard, _monster) {
-    _wizard.facing = "dead";
-    _wizard.frame = 1;
+    if (wizard.health <= 0) {
+      _wizard.facing = "dead";
+      _wizard.frame = 1;
 
-    _wizard.isAlive = false;
-    _wizard.body.velocity.y = -500
-    _wizard.body.gravity.y = 2000
-    _wizard.body.velocity.x = 0
-    _wizard.body.collideWorldBounds = false;
-    _wizard.checkWorldBounds = true;
-    _wizard.outOfBoundsKill = true;
+      _wizard.isAlive = false;
+      _wizard.body.velocity.y = -500
+      _wizard.body.gravity.y = 2000
+      _wizard.body.velocity.x = 0
+      _wizard.body.collideWorldBounds = false;
+      _wizard.checkWorldBounds = true;
+      _wizard.outOfBoundsKill = true;
+    } else if (!_wizard.injured) {
+      _wizard.injured = true;
+      _wizard.health -= _monster.damage;
+      setTimeout(function(){
+        _wizard.injured = false
+      }, 300)
+    }
 
+
+}
+
+function deathTrapCollide(_wizard, _spikes) {
+  _wizard.facing = "dead";
+  _wizard.frame = 1;
+  _wizard.health = 0;
+  _wizard.isAlive = false;
+  _wizard.body.velocity.y = -500
+  _wizard.body.gravity.y = 2000
+  _wizard.body.velocity.x = 0
+  _wizard.body.collideWorldBounds = false;
+  _wizard.checkWorldBounds = true;
+  _wizard.outOfBoundsKill = true;
 }
