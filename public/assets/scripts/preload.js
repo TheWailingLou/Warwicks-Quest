@@ -15,13 +15,18 @@ preload.prototype = {
 
     this.game.load.image('mainTiles', 'assets/world/tilesets/dawnOfGods.png');
     this.game.load.tilemap('testLevel', 'assets/world/CSV/Test.csv', null, Phaser.Tilemap.CSV);
+<<<<<<< HEAD
+    this.game.load.spritesheet('button-start', 'assets/images/button-start.png', 401, 143);
+    this.game.load.image('button-pause', 'assets/images/button-pause.png');
+=======
     this.game.load.tilemap('testBack', 'assets/world/CSV/LayerTest2_TileLayer1.csv', null, Phaser.Tilemap.CSV);
     this.game.load.tilemap('testFor', 'assets/world/CSV/LayerTest2_TileLayer2.csv', null, Phaser.Tilemap.CSV)
     this.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 
+>>>>>>> master
   },
   create: function() {
-    this.game.state.start("mainGame")
+    this.game.state.start("mainMenu")
   }
 }
