@@ -7,6 +7,8 @@ preload.prototype = {
     this.game.load.atlasJSONHash('monster', 'assets/sprites/msMonster.png', 'assets/sprites/msMonster.json');
     this.game.load.atlasJSONHash('skelly', 'assets/sprites/skelly.png', 'assets/sprites/skelly.json');
     this.game.load.atlasJSONHash('mummy', 'assets/sprites/msMummy.png', 'assets/sprites/msMummy.json');
+    this.game.load.atlasJSONHash('bat', 'assets/sprites/bat.png', 'assets/sprites/bat.json');
+
     this.game.load.atlasJSONHash('greenCoin', 'assets/sprites/Crystals/green/green.png', 'assets/sprites/Crystals/green/green.json');
     this.game.load.atlasJSONHash('blueCoin', 'assets/sprites/Crystals/blue/blue.png', 'assets/sprites/Crystals/blue/blue.json');
     this.game.load.atlasJSONHash('yellowCoin', 'assets/sprites/Crystals/yellow/yellow.png', 'assets/sprites/Crystals/yellow/yellow.json');
