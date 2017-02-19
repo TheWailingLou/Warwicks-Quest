@@ -176,7 +176,7 @@ level1Test.prototype = {
 
     game.camera.follow(wizard)
 
-    camp = game.add.sprite(185*32, 32*32, "camp");
+    camp = game.add.sprite(185*32, 30*32, "camp");
     camp.animations.add('burning', [0,1,2,3,4]);
     camp.animations.play("burning", 16, true);
     game.physics.arcade.enable(camp);
@@ -247,11 +247,11 @@ level1Test.prototype = {
     var numberOfBats = 2;
     var monsterStartPositions = [[39,46],[105,41],[178,41]];
     var skellyStartPositions = [[29,35],[113,39],[168,28],[89,41]];
-    var mummyStartPositions = [[81,41],[135,31],[162,9]]
+    var mummyStartPositions = [[81,41],[135,31],[162,5]]
 
     var monsterMovementTypes = [["wallTurn"],["wallTurn"],["wallTurn"]]
     var skellyMovementTypes = [["distanceTurn", 7*32],["distanceTurn", 3*32],["distanceTurn", 3*32],["wallTurn"]]
-    var mummyMovementTypes = [["wallTurn"],["distanceTurn", 3*32],["distanceTurn", 5*32]]
+    var mummyMovementTypes = [["wallTurn"],["distanceTurn", 3*32],["distanceTurn", 3*32]]
 
     var batStartPositions = [[43,23],[81,7],[111,8],[93,31],[162,18],[179,14]]
 
@@ -355,7 +355,7 @@ level1Test.prototype = {
     allCoins = [];
 
     var greenCoinPositions =[[6,11],[8,11],[10,11],[12,11],[14,11],[41,46],[68,14], [76,14], [81,41],[82,41],[83,41], [182, 40], [196,30],[195,23]];
-    var blueCoinPositions = [[7,11],[9,11],[11,11],[13,11], [85,15], [100,27], [154,41],[196,23], [195,16],[196,16]];
+    var blueCoinPositions = [[7,11],[9,11],[11,11],[13,11], [85,14], [100,27], [154,41],[196,23], [195,16],[196,16]];
     var yellowCoinPositions =[[117,15],[198,1], [123,3]];
 
 
