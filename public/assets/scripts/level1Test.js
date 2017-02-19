@@ -1,4 +1,4 @@
-var mainGame = function(game) {
+var level1Test = function(game) {
 }
 
 var game;
@@ -10,6 +10,7 @@ var flyingEnemies;
 var walkingEnemies;
 var allEnemies;
 var enemyTypes = [flyingEnemies, walkingEnemies, allEnemies]
+
 var allSpikes;
 
 
@@ -26,9 +27,11 @@ var characterJumpHeight = 500;
 var characterFrameRate = 16;
 var grid;
 
-var greenCoin;
-var blueCoin;
-var yellowCoin;
+
+// var greenCoins;
+// var blueCoins;
+// var yellowCoins;
+var allCoins;
 var coinFrameRate = 10;
 var cachedScore = 0;
 var score = 0;
@@ -54,7 +57,7 @@ var layerBack;
 var WebFontConfig;
 
 
-mainGame.prototype = {
+level1Test.prototype = {
   create: function() {
 
     game = this.game;
@@ -62,8 +65,8 @@ mainGame.prototype = {
     game.physics.startSystem(Phaser.Physics.ARCADE)
 
 
-    backMap = game.add.tilemap('testBack', 32, 32);
-    testMap = game.add.tilemap('testFor', 32, 32);
+    backMap = game.add.tilemap('testlevelBack', 32, 32);
+    testMap = game.add.tilemap('testlevelFor', 32, 32);
 
     backMap.addTilesetImage('mainTiles');
     testMap.addTilesetImage('mainTiles');
@@ -128,12 +131,18 @@ mainGame.prototype = {
 
     game.physics.arcade.gravity.y = worldGravity;
 
+    // var
+    // spikes = game.add.sprite(640, 768, "spikes")
+    // game.physics.arcade.enable(spikes);
+    // spikes.body.allowGravity = false;
+    // spikes.body.immovable = true;
+    // spikes.body.setSize(32, 16, 0, 16)
+    // spikes.frame = 0;
 
 
 
 
-
-    wizard = game.add.sprite(50, 50, "wizard")
+    wizard = game.add.sprite(32, 896, "wizard")
     game.physics.arcade.enable(wizard);
 
     wizard.body.collideWorldBounds = true;
@@ -167,7 +176,7 @@ mainGame.prototype = {
 
     game.camera.follow(wizard)
 
-    camp = game.add.sprite(960, 300, "camp");
+    camp = game.add.sprite(185*32, 32*32, "camp");
     camp.animations.add('burning', [0,1,2,3,4]);
     camp.animations.play("burning", 16, true);
     game.physics.arcade.enable(camp);
@@ -178,10 +187,23 @@ mainGame.prototype = {
 
     ///
 
-    // var numberOfGroundSpikes = 1;
-    var groundSpikePositions =[[640, 768]]
+    // var numberOfGroundSpsikes = 10;
+    var groundSpikePositions =[                                                   //v marks 10
+      [10, 33], [23, 35],[44,46],[50,32],[51,32],[52,32],[53,32], [59,32],[60,32],[61,32], //v 21
+      [58,16],[59,16],[60,16],[61,16],[62,16],[63,16],[64,16],[65,16],[66,16],[67,16],[68,16],
+      [69,16],[70,16],[71,16],[72,16],[73,16],[74,16],[75,16],[76,16],[77,16],[78,16],[79,16],
+      [80,16],[81,16],[82,16],[83,16], [84,16],[85,16],[86,16],[87,16],[88,16],[89,16],[90,16],
+      [127,36],[128,36],[129,36],[130,36],[131,36],[132,36],[133,36],[134,36],[135,36],[136,36],
+      [137,36],[138,36],[139,36],[140,36],[141,36],[142,36],[143,36],[144,36],[145,36],[146,36],
+      [147,36], [148,36], [149,36], [150,36],[151,36],[152,36],[153,36],
+      [156,36],[157,36],[158,36],[159,36],[160,36],[161,36],[162,36],[163,36], [164,36],[165,36],
+      [166,36],[167,36],[168,36],[169,36],[170,36], [85,41], [98,41]
+    ]
     var numberOfLeftSpikes = 0;
-    var leftSpikePositions =[[]];
+    var leftSpikePositions =[
+      [39,45],[185,37],[191,29],[191,25],[192,20], [192,19],[192,18],[192,17],[192,16],[192,15],[192,14],[192,13],
+      [192,12]
+    ];
     var numberOfRightSpikes = 0;
     var rightSpikePositions =[[]];
     var numberOfTopSpikes = 0;
@@ -190,8 +212,8 @@ mainGame.prototype = {
 
 
     for (var i=0; i<groundSpikePositions.length; i++) {
-      var x = groundSpikePositions[i][0];
-      var y = groundSpikePositions[i][1];
+      var x = groundSpikePositions[i][0]*32;
+      var y = groundSpikePositions[i][1]*32;
       spikes = game.add.sprite(x, y, "spikes")
       game.physics.arcade.enable(spikes);
       spikes.body.allowGravity = false;
@@ -202,6 +224,18 @@ mainGame.prototype = {
       allSpikes.push(spikes)
     }
 
+    for (var i=0; i<leftSpikePositions.length; i++) {
+      var x = leftSpikePositions[i][0]*32;
+      var y = leftSpikePositions[i][1]*32;
+      spikes = game.add.sprite(x, y, "spikes")
+      game.physics.arcade.enable(spikes);
+      spikes.body.allowGravity = false;
+      spikes.body.immovable = true;
+      spikes.body.setSize(16, 32, 0, 0)
+      spikes.frame = 3;
+      spikes.key = "leftSpikes" + i.toString();
+      allSpikes.push(spikes)
+    }
 
     flyingEnemies = [];
     walkingEnemies = [];
@@ -211,23 +245,20 @@ mainGame.prototype = {
     var numberOfSkellys = 1;
     var numberOfMummys = 1;
     var numberOfBats = 2;
+    var monsterStartPositions = [[39,46],[105,41],[178,41]];
+    var skellyStartPositions = [[29,35],[113,39],[168,28],[89,41]];
+    var mummyStartPositions = [[81,41],[135,31],[162,9]]
 
-    var monsterStartPositions = [[250,320]];
-    var skellyStartPositions = [[200,320]];
-    var mummyStartPositions = [[300,320]]
+    var monsterMovementTypes = [["wallTurn"],["wallTurn"],["wallTurn"]]
+    var skellyMovementTypes = [["distanceTurn", 7*32],["distanceTurn", 3*32],["distanceTurn", 3*32],["wallTurn"]]
+    var mummyMovementTypes = [["wallTurn"],["distanceTurn", 3*32],["distanceTurn", 5*32]]
 
-    var monsterMovementTypes = [["wallTurn"]]
-    var skellyMovementTypes = [["wallTurn"]]
-    var mummyMovementTypes = [["distanceTurn", 200]]
-
-    var batStartPositions = [[200,600],[300,600]]
-
+    var batStartPositions = [[43,23],[81,7],[111,8],[93,31],[162,18],[179,14]]
 
 
-
-    for (var i=0; i<numberOfMonsters; i++) {
-      var x = monsterStartPositions[i][0];
-      var y = monsterStartPositions[i][1];
+    for (var i=0; i<monsterStartPositions.length; i++) {
+      var x = monsterStartPositions[i][0]*32;
+      var y = monsterStartPositions[i][1]*32;
       monster = game.add.sprite(x, y, "monster");
       monster.animations.add('walkLeft', [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]);
       monster.animations.add('walkRight', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
@@ -247,9 +278,9 @@ mainGame.prototype = {
       monster.body.setSize(37,40,2,0)
     }
 
-    for (var i=0; i<numberOfSkellys; i++) {
-      var x = skellyStartPositions[i][0];
-      var y = skellyStartPositions[i][1];
+    for (var i=0; i<skellyStartPositions.length; i++) {
+      var x = skellyStartPositions[i][0]*32;
+      var y = skellyStartPositions[i][1]*32;
       skelly = game.add.sprite(x, y, "skelly");
       skelly.scale.x = .8;
       skelly.scale.y = .8;
@@ -271,9 +302,9 @@ mainGame.prototype = {
       skelly.body.setSize(40,50,15,9)
     }
 
-    for (var i=0; i<numberOfMummys; i++) {
-      var x = mummyStartPositions[i][0];
-      var y = mummyStartPositions[i][1];
+    for (var i=0; i<mummyStartPositions.length; i++) {
+      var x = mummyStartPositions[i][0]*32;
+      var y = mummyStartPositions[i][1]*32;
       mummy = game.add.sprite(x, y, "mummy");
       mummy.scale.x = .9;
       mummy.scale.y = .9;
@@ -296,9 +327,9 @@ mainGame.prototype = {
 
     }
 
-    for (var i=0; i<numberOfBats; i++) {
-      var x = batStartPositions[i][0];
-      var y = batStartPositions[i][1];
+    for (var i=0; i<batStartPositions.length; i++) {
+      var x = batStartPositions[i][0]*32;
+      var y = batStartPositions[i][1]*32;
       bat = game.add.sprite(x, y, "bat");
       bat.animations.add("flyLeft", [12, 13, 14, 15]);
       bat.animations.add('flyRight', [4, 5, 6, 7]);
@@ -318,37 +349,93 @@ mainGame.prototype = {
       bat.body.setSize(32,32, 0, 0)
     }
 
-    greenCoin = game.add.sprite(350, 320, "greenCoin");
-    yellowCoin = game.add.sprite(320, 320, "yellowCoin");
-    blueCoin = game.add.sprite(380, 320, "blueCoin");
+    // greenCoins = []
+    // yellowCoins = []
+    // blueCoins = []
+    allCoins = [];
 
-    greenCoin.val = 5;
-    blueCoin.val = 10;
-    yellowCoin.val = 15;
-    greenCoin.scale.x = .7;
-    greenCoin.scale.y = .7;
-    yellowCoin.scale.x = .7;
-    yellowCoin.scale.y = .7;
-    blueCoin.scale.x = .7;
-    blueCoin.scale.y = .7;
-
-    greenCoin.animations.add('sparkle', [1,2,3,4,5,6,7,8]);
-    blueCoin.animations.add('sparkle', [1,2,3,4,5,6,7,8]);
-    yellowCoin.animations.add('sparkle', [1,2,3,4,5,6,7,8]);
-
-    allEnemies.forEach(function(enemy){
-
-    })
-
-    game.physics.arcade.enable(greenCoin);
-    game.physics.arcade.enable(blueCoin);
-    game.physics.arcade.enable(yellowCoin);
+    var greenCoinPositions =[[6,11],[8,11],[10,11],[12,11],[14,11],[41,46],[68,14], [76,14], [81,41],[82,41],[83,41], [182, 40], [196,30],[195,23]];
+    var blueCoinPositions = [[7,11],[9,11],[11,11],[13,11], [85,15], [100,27], [154,41],[196,23], [195,16],[196,16]];
+    var yellowCoinPositions =[[117,15],[198,1], [123,3]];
 
 
+    for (var i=0; i<greenCoinPositions.length; i++){
+      var x = greenCoinPositions[i][0]*32;
+      var y = greenCoinPositions[i][1]*32;
+      greenCoin = game.add.sprite(x,y, "greenCoin")
+      greenCoin.animations.add('sparkle', [0,1,2,3,4,5,6,7]);
+      greenCoin.animations.play("sparkle", coinFrameRate, true)
+      game.physics.arcade.enable(greenCoin);
+      greenCoin.body.setSize(20,30,7,0)
+      greenCoin.val = 10;
+      greenCoin.scale.x = .7;
+      greenCoin.scale.y = .7;
 
-    blueCoin.body.setSize(20,30,7,0)
-    yellowCoin.body.setSize(20,30,7,0)
-    greenCoin.body.setSize(20,30,7,0)
+      allCoins.push(greenCoin);
+    }
+
+    for (var i=0; i<blueCoinPositions.length; i++){
+      var x = blueCoinPositions[i][0]*32;
+      var y = blueCoinPositions[i][1]*32;
+      blueCoin = game.add.sprite(x,y, "blueCoin")
+      blueCoin.animations.add('sparkle', [0,1,2,3,4,5,6,7]);
+      blueCoin.animations.play("sparkle", coinFrameRate, true)
+      game.physics.arcade.enable(blueCoin);
+      blueCoin.body.setSize(20,30,7,0)
+      blueCoin.val = 100;
+      blueCoin.scale.x = .7;
+      blueCoin.scale.y = .7;
+
+      allCoins.push(blueCoin);
+    }
+
+    for (var i=0; i<yellowCoinPositions.length; i++){
+      var x = yellowCoinPositions[i][0]*32;
+      var y = yellowCoinPositions[i][1]*32;
+      yellowCoin = game.add.sprite(x,y, "yellowCoin")
+      yellowCoin.animations.add('sparkle', [0,1,2,3,4,5,6,7]);
+      yellowCoin.animations.play("sparkle", coinFrameRate, true)
+      game.physics.arcade.enable(yellowCoin);
+      yellowCoin.body.setSize(20,30,7,0)
+      yellowCoin.val = 1000;
+      yellowCoin.scale.x = .7;
+      yellowCoin.scale.y = .7;
+
+      allCoins.push(yellowCoin);
+    }
+
+
+
+    // greenCoin = game.add.sprite(350, 320, "greenCoin");
+    // yellowCoin = game.add.sprite(320, 320, "yellowCoin");
+    // blueCoin = game.add.sprite(380, 320, "blueCoin");
+
+
+    // blueCoin.val = 100;
+    // yellowCoin.val = 1000;
+
+    // yellowCoin.scale.x = .7;
+    // yellowCoin.scale.y = .7;
+    // blueCoin.scale.x = .7;
+    // blueCoin.scale.y = .7;
+
+
+    // blueCoin.animations.add('sparkle', [1,2,3,4,5,6,7,8]);
+    // yellowCoin.animations.add('sparkle', [1,2,3,4,5,6,7,8]);
+
+    // allEnemies.forEach(function(enemy){
+    //
+    // })
+
+
+    // game.physics.arcade.enable(blueCoin);
+    // game.physics.arcade.enable(yellowCoin);
+
+
+
+    // blueCoin.body.setSize(20,30,7,0)
+    // yellowCoin.body.setSize(20,30,7,0)
+
 
 
     cursors = game.input.keyboard.createCursorKeys();
@@ -392,23 +479,27 @@ mainGame.prototype = {
     allSpikes.forEach(function(spk){
       game.physics.arcade.collide(wizard, spk, deathTrapCollide, function(){return (wizard.isAlive)}, this);
     })
+    // game.physics.arcade.collide(wizard, spikes, deathTrapCollide, function(){return (wizard.isAlive)}, this);
+
+    // game.physics.arcade.collide(greenCoin, layer);
+    // game.physics.arcade.collide(blueCoin, layer);
+    // game.physics.arcade.collide(yellowCoin, layer);
+
+    // greenCoin.animations.play("sparkle", coinFrameRate, true);
+    // blueCoin.animations.play("sparkle", coinFrameRate-1, true);
+    // yellowCoin.animations.play("sparkle", coinFrameRate+1, true);
+
+    allCoins.forEach(function(coin){
+      game.physics.arcade.collide(coin, layer);
+      game.physics.arcade.collide(wizard, coin, takeCoin);
+
+    })
+    // game.physics.arcade.collide(wizard, greenCoin, this.takeCoin);
+    // game.physics.arcade.collide(wizard, blueCoin, this.takeCoin);
+    // game.physics.arcade.collide(wizard, yellowCoin, this.takeCoin);
 
 
-    game.physics.arcade.collide(greenCoin, layer);
-    game.physics.arcade.collide(blueCoin, layer);
-    game.physics.arcade.collide(yellowCoin, layer);
-
-    greenCoin.animations.play("sparkle", coinFrameRate, true);
-    blueCoin.animations.play("sparkle", coinFrameRate-1, true);
-    yellowCoin.animations.play("sparkle", coinFrameRate+1, true);
-
-
-    game.physics.arcade.collide(wizard, greenCoin, this.takeCoin);
-    game.physics.arcade.collide(wizard, blueCoin, this.takeCoin);
-    game.physics.arcade.collide(wizard, yellowCoin, this.takeCoin);
-
-
-    greenCoin.animations.play("sparkle", characterFrameRate, true);
+    // greenCoin.animations.play("sparkle", characterFrameRate, true);
 
     walkingEnemies.forEach(function(enemy){
       if (enemy.movementType[0] === "wallTurn") {
@@ -739,11 +830,7 @@ mainGame.prototype = {
     console.log("you win!")
   },
 
-  takeCoin: function(player, coin) {
-      score += coin.val;
-      coin.kill();
-      scoreText.text = scoreString + score;
-  },
+
 
   jump: function() {
     console.log(wizard.body.velocity.y)
@@ -881,7 +968,10 @@ mainGame.prototype = {
     // game.debug.body(monster)
     // game.debug.body(mummy)
     // game.debug.body(bat)
-    // game.debug.body(spikes)
+    // allSpikes.forEach(function(spike){
+    //   game.debug.body(spike)
+    // })
+
     // game.debug.body(camp)
 
     // game.debug.body(yellowCoin)
@@ -912,6 +1002,13 @@ function monsterCollide(_wizard, _monster) {
     }
 
 
+}
+
+function takeCoin(player, _coin) {
+  console.log("takeCoin is running")
+    score += _coin.val;
+    _coin.kill();
+    scoreText.text = scoreString + score;
 }
 
 
