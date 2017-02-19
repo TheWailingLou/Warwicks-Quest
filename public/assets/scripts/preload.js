@@ -26,11 +26,17 @@ preload.prototype = {
 
     this.game.load.tilemap('testBack', 'assets/world/CSV/LayerTest2_TileLayer1.csv', null, Phaser.Tilemap.CSV);
     this.game.load.tilemap('testFor', 'assets/world/CSV/LayerTest2_TileLayer2.csv', null, Phaser.Tilemap.CSV)
+
     this.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+
+    this.game.load.tilemap('testlevelBack', 'assets/world/CSV/level1Attempt_background.csv', null, Phaser.Tilemap.CSV);
+    this.game.load.tilemap('testlevelFor', 'assets/world/CSV/level1Attempt_forground.csv', null, Phaser.Tilemap.CSV)
+
+
 
 
   },
   create: function() {
-    this.game.state.start("mainGame")
+    this.game.state.start("level1Test")
   }
 }
