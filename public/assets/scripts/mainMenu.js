@@ -24,6 +24,6 @@ mainMenu.prototype = {
   },
 
   startGame: function() {
-    this.game.state.start("mainGame", true, false)
+    this.game.state.start("level1Test", true, false)
   },
 };
