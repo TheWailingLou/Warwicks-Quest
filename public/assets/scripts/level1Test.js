@@ -562,11 +562,12 @@ level1Test.prototype = {
           if (enemy.body.x > wizard.body.x) {
             enemy.animations.play("flyLeft", enemy.frameRate, true);//.delay = 45;
             enemy.body.velocity.x = -enemy.velocity;
-          } else if (bat.body.x < wizard.body.x){
+          } else if (enemy.body.x < wizard.body.x){
             enemy.animations.play("flyRight", enemy.frameRate, true);//.delay = 45;
             enemy.body.velocity.x = enemy.velocity;
           } else {
             enemy.body.velocity.x = 0;
+            enemy.animations.play("flyLeft", enemy.frameRate, true)
           }
 
           if (enemy.body.y > wizard.body.y + 1) {
@@ -574,9 +575,11 @@ level1Test.prototype = {
           } else if (enemy.body.y < wizard.body.y - 1) {
             enemy.body.velocity.y = enemy.velocity;
           } else {
+            enemy.animations.play("flyLeft", enemy.frameRate, true)
             enemy.body.velocity.y = 0;
           }
         } else {
+          enemy.animations.play("flyLeft", enemy.frameRate, true)
           enemy.body.velocity.y = 0;
           enemy.body.velocity.x = 0;
         }
