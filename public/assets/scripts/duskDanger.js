@@ -984,28 +984,29 @@ duskDanger.prototype = {
   }
 }
 
-function monsterCollide(_wizard, _monster) {
-    if (wizard.health <= 0) {
-      _wizard.facing = "dead";
-      _wizard.frame = 1;
-
-      _wizard.isAlive = false;
-      _wizard.body.velocity.y = -500
-      _wizard.body.gravity.y = 2000
-      _wizard.body.velocity.x = 0
-      _wizard.body.collideWorldBounds = false;
-      _wizard.checkWorldBounds = true;
-      _wizard.outOfBoundsKill = true;
-    } else if (!_wizard.injured) {
-      _wizard.injured = true;
-      _wizard.health -= _monster.damage;
-      setTimeout(function(){
-        _wizard.injured = false
-      }, 300)
-    }
-
-
-}
+//testing if it's getting function from here!
+// function monsterCollide(_wizard, _monster) {
+//     if (wizard.health <= 0) {
+//       _wizard.facing = "dead";
+//       _wizard.frame = 1;
+//
+//       _wizard.isAlive = false;
+//       _wizard.body.velocity.y = -500
+//       _wizard.body.gravity.y = 2000
+//       _wizard.body.velocity.x = 0
+//       _wizard.body.collideWorldBounds = false;
+//       _wizard.checkWorldBounds = true;
+//       _wizard.outOfBoundsKill = true;
+//     } else if (!_wizard.injured) {
+//       _wizard.injured = true;
+//       _wizard.health -= _monster.damage;
+//       setTimeout(function(){
+//         _wizard.injured = false
+//       }, 300)
+//     }
+//
+//
+// }
 
 function takeCoin(player, _coin) {
   console.log("takeCoin is running")
@@ -1014,19 +1015,19 @@ function takeCoin(player, _coin) {
     scoreText.text = scoreString + score;
 }
 
-
-function deathTrapCollide(_wizard, _spikes) {
-  _wizard.facing = "dead";
-  _wizard.frame = 1;
-  _wizard.health = 0;
-  _wizard.isAlive = false;
-  _wizard.body.velocity.y = -500
-  _wizard.body.gravity.y = 2000
-  _wizard.body.velocity.x = 0
-  _wizard.body.collideWorldBounds = false;
-  _wizard.checkWorldBounds = true;
-  _wizard.outOfBoundsKill = true;
-}
+// or possibly here!!
+// function deathTrapCollide(_wizard, _spikes) {
+//   _wizard.facing = "dead";
+//   _wizard.frame = 1;
+//   _wizard.health = 0;
+//   _wizard.isAlive = false;
+//   _wizard.body.velocity.y = -500
+//   _wizard.body.gravity.y = 2000
+//   _wizard.body.velocity.x = 0
+//   _wizard.body.collideWorldBounds = false;
+//   _wizard.checkWorldBounds = true;
+//   _wizard.outOfBoundsKill = true;
+// }
 
 function position() {
   console.log(wizard.body.x, wizard.body.y)

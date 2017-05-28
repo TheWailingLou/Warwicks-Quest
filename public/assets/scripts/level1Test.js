@@ -459,8 +459,9 @@ level1Test.prototype = {
   },
 
   update: function() {
-    count += 1;
-    console.log(count);
+    console.log(wizard.isAlive)
+    // count += 1;
+    // console.log(count);
 
     if (wizard.health < 0) {
       wizard.health = 0;
@@ -484,6 +485,9 @@ level1Test.prototype = {
     allSpikes.forEach(function(spk){
       game.physics.arcade.collide(wizard, spk, deathTrapCollide, function(){return (wizard.isAlive)}, this);
     })
+    // allSpikes.forEach(function(spk){
+    //   game.physics.arcade.collide(wizard, spk, function(_wizard){console.log("working?")}, function(){return (wizard.isAlive)}, this);
+    // })
     // game.physics.arcade.collide(wizard, spikes, deathTrapCollide, function(){return (wizard.isAlive)}, this);
 
     // game.physics.arcade.collide(greenCoin, layer);
@@ -834,7 +838,7 @@ level1Test.prototype = {
     _camp.tint = 0x00F0FF
     setTimeout(function(){
       game.state.start("mainMenu")
-    }, 1000)
+    }, 500)
     console.log("you win!")
   },
 
@@ -989,18 +993,36 @@ level1Test.prototype = {
   }
 }
 
+function wizardDeath(_wizard) {
+  // console.log("is this function at least getting called?")
+  _wizard.facing = "dead";
+  _wizard.frame = 1;
+  _wizard.isAlive = false;
+  _wizard.body.velocity.y = -500;
+  _wizard.body.gravity.y = 2000;
+  _wizard.body.velocity.x = 0;
+  _wizard.body.collideWorldBounds = false;
+  _wizard.checkWorldBounds = true;
+  _wizard.outOfBoundsKill = true;
+  setTimeout(function(){
+    console.log("is this function at least getting called?")
+    game.state.start("mainMenu")
+  }, 1000)
+}
+
 function monsterCollide(_wizard, _monster) {
     if (wizard.health <= 0) {
-      _wizard.facing = "dead";
-      _wizard.frame = 1;
-
-      _wizard.isAlive = false;
-      _wizard.body.velocity.y = -500
-      _wizard.body.gravity.y = 2000
-      _wizard.body.velocity.x = 0
-      _wizard.body.collideWorldBounds = false;
-      _wizard.checkWorldBounds = true;
-      _wizard.outOfBoundsKill = true;
+      wizardDeath(_wizard);
+      // _wizard.facing = "dead";
+      // _wizard.frame = 1;
+      //
+      // _wizard.isAlive = false;
+      // _wizard.body.velocity.y = -500
+      // _wizard.body.gravity.y = 2000
+      // _wizard.body.velocity.x = 0
+      // _wizard.body.collideWorldBounds = false;
+      // _wizard.checkWorldBounds = true;
+      // _wizard.outOfBoundsKill = true;
     } else if (!_wizard.injured) {
       _wizard.injured = true;
       _wizard.health -= _monster.damage;
@@ -1021,16 +1043,18 @@ function takeCoin(player, _coin) {
 
 
 function deathTrapCollide(_wizard, _spikes) {
-  _wizard.facing = "dead";
-  _wizard.frame = 1;
-  _wizard.health = 0;
-  _wizard.isAlive = false;
-  _wizard.body.velocity.y = -500
-  _wizard.body.gravity.y = 2000
-  _wizard.body.velocity.x = 0
-  _wizard.body.collideWorldBounds = false;
-  _wizard.checkWorldBounds = true;
-  _wizard.outOfBoundsKill = true;
+  console.log("is this happening??")
+  wizardDeath(_wizard);
+  // _wizard.facing = "dead";
+  // _wizard.frame = 1;
+  // _wizard.health = 0;
+  // _wizard.isAlive = false;
+  // _wizard.body.velocity.y = -500
+  // _wizard.body.gravity.y = 2000
+  // _wizard.body.velocity.x = 0
+  // _wizard.body.collideWorldBounds = false;
+  // _wizard.checkWorldBounds = true;
+  // _wizard.outOfBoundsKill = true;
 }
 
 function position() {
