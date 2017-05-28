@@ -13,6 +13,8 @@ var enemyTypes = [flyingEnemies, walkingEnemies, allEnemies]
 
 var allSpikes;
 
+var count = 0;
+
 
 
 var monsterFrameRate = 16;
@@ -457,6 +459,9 @@ level1Test.prototype = {
   },
 
   update: function() {
+    count += 1;
+    console.log(count);
+
     if (wizard.health < 0) {
       wizard.health = 0;
     }

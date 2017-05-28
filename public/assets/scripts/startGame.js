@@ -9,6 +9,7 @@ function run(){
 	game.state.add("mainMenu",mainMenu);
 	game.state.add("mainGame", mainGame);
 	game.state.add("level1Test", level1Test);
+	game.state.add("duskDanger", duskDanger);
   // game.state.add("mainGame", mainGame);
 	game.state.start("boot");
 };

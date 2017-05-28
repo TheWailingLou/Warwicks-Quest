@@ -1,0 +1,23 @@
+{
+  "name": "Q1Break",
+  "version": "1.0.0",
+  "description": "This is a game designed by several people in the Galvanize G43 cohort.  It is a sidescrolling platformer game.  Harnass your ancient wizard power by becoming the greatest wizard to scroll right!",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheWailingLou/q1BreakGame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheWailingLou/q1BreakGame/issues"
+  },
+  "homepage": "https://github.com/TheWailingLou/q1BreakGame#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
