@@ -4,6 +4,7 @@
   "description": "This is a game designed by several people in the Galvanize G43 cohort.  It is a sidescrolling platformer game.  Harnass your ancient wizard power by becoming the greatest wizard to scroll right!",
   "main": "app.js",
   "scripts": {
+    "start":"node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
